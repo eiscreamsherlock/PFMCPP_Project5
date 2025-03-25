@@ -71,14 +71,16 @@ write 3 UDTs below that EACH have:
 
  */
 #include <iostream>
+#include <vector>
 /*
  copied UDT 1:
  */
 struct FountainPen
 {
-    FountainPen();
+    FountainPen(std::string name);
     ~FountainPen();
     std::string inkColor = "black";
+    std::string name;
     float inkRemaining, nibWidthInMm, feedCapacity;
     int daysSinceLastClean;
 
@@ -105,7 +107,8 @@ struct FountainPen
     int compareNibLength(Nib currentNib, Nib newNib);
 };
 
-FountainPen::FountainPen() :
+FountainPen::FountainPen(std::string n) :
+name(n),
 inkRemaining(30.0f),
 nibWidthInMm(10.5f),
 feedCapacity(30.0f)
@@ -130,6 +133,7 @@ FountainPen::Nib::~Nib()
 {
     std::cout << "Your nib is destroyed!\n";
 }
+
 void FountainPen::Nib::cleanNib(bool needClean)
 {
     if (needClean)
@@ -142,6 +146,7 @@ void FountainPen::Nib::cleanNib(bool needClean)
         std::cout << "Nothing to do, already clean!\n";
     }
 }
+
 
 void FountainPen::Nib::polishNib(std::string nStyle, bool alreadyPolished)
 {
@@ -468,27 +473,80 @@ void GameBoy::Cartridge::playTilLvl(int tLvl)
  */
 struct PenCase
 {
+    
     PenCase();
     ~PenCase();
+    std::vector<FountainPen> pens;
+
+    void addNewPen(FountainPen newPen);
+    void displayPens();
 };
 
 PenCase::PenCase()
 {
-    std::cout << "A new pencase has been created!\n";
+    std::cout << "Wow! You got a new PenCase!\n";
 }
     
 PenCase::~PenCase()
 {
-    std::cout << "You'll need to find a new case to your pens in...\n";
+    std::cout << "You'll need to find a new case to put your pens in...\n";
 }
+
+void PenCase::addNewPen(FountainPen nPen)
+{
+    pens.push_back(nPen);
+}
+
+/*
+Had to do some reading to sort this one out.
+
+Read here that vectors are the "dynamic-sized array":
+https://en.cppreference.com/w/cpp/container/vector
+
+Got the syntax and for loops example from here:
+https://www.w3schools.com/cpp/cpp_vectors.asp
+
+I kept getting warnings about type mismatch in my for loop and using the 
+pens[i].name syntax.
+I remembered your notes about unbound/unsafe arrays in a previous assignment,
+so I read this page after seeing "access specified element with bounds checking"
+in the member functions list:
+https://en.cppreference.com/w/cpp/container/vector/at
+
+*/
+void PenCase::displayPens()
+{
+    if (!pens.empty())
+    {
+        std::cout << "Let's see what we've got in here...\n";
+        // kept complaining about signed int vs. unsigned size_type
+        // I think it's safe to use the unsigned int here because we're always
+        // counting up and shouldn't have a negative value in the loop.
+        for(unsigned int i = 0; i < pens.size(); i++)
+        {
+            std::cout << i + 1 << ". " << pens.at(i).name << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "Looks like you need to get some new pens!\n";
+    }
+}
+
 /*
  new UDT 5:
  with 2 member functions
  */
 struct RoadTripEntertainment
 {
+    std::vector<CdChanger::Disc> cdCase;
+    std::vector<GameBoy::Cartridge> games;
     RoadTripEntertainment();
     ~RoadTripEntertainment();
+    void addToCdCase(CdChanger::Disc newDisc);
+    void addToGameCase(GameBoy::Cartridge newGame);
+    void displayTripCds();
+    void displayGames();
 };
     
 RoadTripEntertainment::RoadTripEntertainment()
@@ -500,6 +558,48 @@ RoadTripEntertainment::~RoadTripEntertainment()
 {
     std::cout << "There will be no further entertainment on this roadtrip...\n";
 }
+void RoadTripEntertainment::addToCdCase(CdChanger::Disc nDisc)
+{
+    cdCase.push_back(nDisc);
+}
+
+void RoadTripEntertainment::addToGameCase(GameBoy::Cartridge nGame)
+{
+    games.push_back(nGame);
+}
+
+void RoadTripEntertainment::displayTripCds()
+{
+    if (!cdCase.empty())
+    {
+        std::cout << "What should we listen to...\n";
+        for(unsigned int i = 0; i < cdCase.size(); i++)
+        {
+            std::cout << i + 1 << ". " << cdCase.at(i).albumName << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "Uh oh.  Looks like you forgot to pack some music. :'( \n";
+    }
+}
+
+void RoadTripEntertainment::displayGames()
+{
+    if (!games.empty())
+    {
+        std::cout << "What kind of game are we playing today...\n";
+        for(unsigned int i = 0; i < games.size(); i++)
+        {
+            std::cout << i + 1 << ". " << games.at(i).name << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "How horrible!  We forgot all the games! :O \n";
+    }
+}
+
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
 
@@ -517,7 +617,7 @@ RoadTripEntertainment::~RoadTripEntertainment()
 //#include <iostream>    //moving this include above to resolve some error messages
 int main()
 {
-    FountainPen platinum;
+    FountainPen platinum("Platinum 3776");
     std::cout << "--------------------------------------------------------------------\n";
 
     FountainPen::Nib flexyGold;
@@ -528,43 +628,60 @@ int main()
     music.style = "music";
     std::cout << "--------------------------------------------------------------------\n";
 
+    RoadTripEntertainment goingToCalifornia;
+    
     GameBoy gbColor;
     std::cout << "--------------------------------------------------------------------\n";
 
+    goingToCalifornia.displayGames();
+
     GameBoy::Cartridge goldenSun;
     goldenSun.name = "Golden Sun";
+    goingToCalifornia.addToGameCase(goldenSun);
     std::cout << "--------------------------------------------------------------------\n";
 
     GameBoy::Cartridge marioBros3;
     marioBros3.name = "Mario Bros 3";
+    goingToCalifornia.addToGameCase(marioBros3);
     std::cout << "--------------------------------------------------------------------\n";
+    
+    goingToCalifornia.displayGames();
     
     CdChanger phillips;
     std::cout << "--------------------------------------------------------------------\n";
 
+    goingToCalifornia.displayTripCds();
+
     CdChanger::Disc vanHalen;
     vanHalen.albumName = "Van Halen";
+    goingToCalifornia.addToCdCase(vanHalen);
     std::cout << "--------------------------------------------------------------------\n";
 
     CdChanger::Disc rideTheLightning;
     rideTheLightning.albumName = "Ride The Lightning";
+    goingToCalifornia.addToCdCase(rideTheLightning);
     rideTheLightning.populateAlbumTrackNames();
     std::cout << "--------------------------------------------------------------------\n";
 
     CdChanger::Disc imagesAndWords;
     imagesAndWords.albumName = "Images And Words";
+    goingToCalifornia.addToCdCase(imagesAndWords);
     imagesAndWords.populateAlbumTrackNames();
     std::cout << "--------------------------------------------------------------------\n";
 
     CdChanger::Disc bustinOut;
     bustinOut.albumName = "Bustin Out";
+    goingToCalifornia.addToCdCase(bustinOut);
     bustinOut.populateAlbumTrackNames();
     std::cout << "--------------------------------------------------------------------\n";
 
     CdChanger::Disc kindOfBlue;
     kindOfBlue.albumName = "Kind Of Blue";
+    goingToCalifornia.addToCdCase(kindOfBlue);
     kindOfBlue.populateAlbumTrackNames();
     std::cout << "--------------------------------------------------------------------\n";
+
+    goingToCalifornia.displayTripCds();
 
     platinum.writeCharacter('q');
     platinum.drawALine(1, 5, 15);
@@ -595,7 +712,7 @@ int main()
     marioBros3.cleanCartridgeHead(marioBros3);
     marioBros3.playTilLvl(5);
     marioBros3.saveGameStateToRAM();
-    marioBros3.doYouHaveBattleToads();  
+    marioBros3.doYouHaveBattleToads();
 
     vanHalen.displayAlbumName();
     phillips.playCD(2, vanHalen);
@@ -603,6 +720,15 @@ int main()
     phillips.playCdTillEnd(2);
     std::cout << "Hey, what does this button do?...\n";
     phillips.pausePlayback();
+
+    PenCase fourHolster;
+    fourHolster.displayPens();
+    FountainPen pilot("Namiki Falcon");
+    FountainPen kaweco("Liliput");
+    fourHolster.addNewPen(pilot);
+    fourHolster.addNewPen(kaweco);
+    fourHolster.addNewPen(platinum);
+    fourHolster.displayPens();
 
     std::cout << "good to go!" << std::endl;
 }
