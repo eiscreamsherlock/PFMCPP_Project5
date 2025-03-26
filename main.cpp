@@ -233,8 +233,8 @@ struct CdChanger
         Disc();
         ~Disc();
         std::string albumName, firstTrack;
-        int numOfTracks = 12;            // I know this limits all discs to 12 tracks.
-        std::string trackList[12] {};    // but I don't know how to do a dynamic-sized array in C++ yet
+        int numOfTracks = 12;
+        std::string trackList[12] {};
 
         void populateAlbumTrackNames();
         void displayAlbumName();
@@ -268,7 +268,7 @@ void CdChanger::Disc::displayAlbumName()
 
 void CdChanger::Disc::populateAlbumTrackNames()
 {
-    int i{};
+    int i = 0;
     while(i < numOfTracks)
     {
         std::string thisTrack = std::to_string(i);
@@ -303,11 +303,10 @@ void CdChanger::playCD(int newCdNum, Disc disc)
 
 void CdChanger::playCdTillEnd(int start)
 {
-    int i = start;
-    while(i <= activeDisk.numOfTracks)
+    while(start <= activeDisk.numOfTracks)
     {
-        std::cout << "Now playing track: " << i << std::endl;
-        ++i;
+        std::cout << "Now playing track: " << start << std::endl;
+        ++start;
     }
     currTrackNumber = 1;        // Reset to start after finishing the disk
 }
@@ -446,9 +445,7 @@ void GameBoy::Cartridge::cleanCartridgeHead(Cartridge cN)
 
 bool GameBoy::Cartridge::doYouHaveBattleToads()
 {
-    if (isBattleToads) return true;
-
-    return false;
+    return isBattleToads;
 }
 
 void GameBoy::Cartridge::playTilLvl(int tLvl)
