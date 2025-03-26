@@ -233,9 +233,7 @@ struct CdChanger
         ~Disc();
         std::string albumName, firstTrack;
         int numOfTracks = 12;
-        std::string trackList[12] {};
 
-        void populateAlbumTrackNames();
         void displayAlbumName();
     };
 
@@ -301,7 +299,6 @@ void CdChanger::playCdTillEnd(int start)
 void CdChanger::changeTrack (int newTrackNum, Disc currDisc)
 {
     currTrackNumber = newTrackNum;
-    currentTrackName = currDisc.trackList[newTrackNum];
 }
 void CdChanger::pausePlayback()
 {
