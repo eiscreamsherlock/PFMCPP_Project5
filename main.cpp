@@ -230,7 +230,7 @@ struct CdChanger
 
     struct Disc
     {
-        Disc();
+        Disc(std::string name);
         ~Disc();
         std::string albumName, firstTrack;
         int numOfTracks = 12;
@@ -240,7 +240,7 @@ struct CdChanger
         void displayAlbumName();
     };
 
-    Disc activeDisk;
+    Disc activeDisk {"Midnight Madness"};
 
     void playCD(int newCdNumber, Disc discToPlay);
     void playCdTillEnd(int startingTrack);
@@ -249,32 +249,20 @@ struct CdChanger
 
 };
 
-CdChanger::Disc::Disc()
+CdChanger::Disc::Disc(std::string n)
 {
-    albumName = "Songs from the Aqualounge";
-    firstTrack = "Temporary High";
+    albumName = n;
     std::cout << "Disc is being constructed!\n";
 }
 
 CdChanger::Disc::~Disc()
 {
-    std::cout << "You're an echte Gangster.  You've burned your CD.\n";
+    std::cout << "CD Destroyed.\n";
 }
 
 void CdChanger::Disc::displayAlbumName()
 {
     std::cout << "This album is called: " << albumName << std::endl;
-}
-
-void CdChanger::Disc::populateAlbumTrackNames()
-{
-    int i = 0;
-    while(i < numOfTracks)
-    {
-        std::string thisTrack = std::to_string(i);
-        trackList[i] = "Track No. " + thisTrack;
-        ++i;
-    }
 }
 
 CdChanger::CdChanger() :
@@ -334,9 +322,9 @@ struct GameBoy
 
     struct Cartridge
     {
-        Cartridge();
+        Cartridge(std::string name);
         ~Cartridge();
-        std::string name = "Battle Toads";
+        std::string name;
         std::string cartridgeColor = "grey";
         bool isRumblePackEnabled, isBattleToads, isClean;
         int maxMemory, memoryUsed, currentLvl, maxLvl;
@@ -347,7 +335,7 @@ struct GameBoy
         void playTilLvl(int tgtLvl);
     };
 
-    Cartridge currentGame;
+    Cartridge currentGame {"Bust-a-Move"};
 
     void howBigIsScreen();
     float adjustVolume(float adjustAmount);
@@ -356,7 +344,7 @@ struct GameBoy
     void playGameTilOver();
 };
 
-GameBoy::Cartridge::Cartridge() :
+GameBoy::Cartridge::Cartridge(std::string n) :
 isRumblePackEnabled(false),
 isBattleToads(false),
 maxMemory(16),
@@ -365,6 +353,7 @@ currentLvl(1),
 maxLvl(13)
 {
     isClean = true;
+    name = n;
     std::cout << "Cartridge is being constructed!\n";
 }
 
@@ -516,12 +505,15 @@ void PenCase::displayAllPens()
  */
 struct RoadTripEntertainment
 {
-    std::vector<CdChanger::Disc> cdCase;
-    std::vector<GameBoy::Cartridge> games;
     RoadTripEntertainment();
     ~RoadTripEntertainment();
-    void addToCdCase(CdChanger::Disc newDisc);
-    void addToGameCase(GameBoy::Cartridge newGame);
+    GameBoy::Cartridge game1 {"Pokemon Red"};
+    GameBoy::Cartridge game2 {"Castlevania: The Adventure"};
+    GameBoy::Cartridge game3 {"Bomberman"};
+    CdChanger::Disc disc1 {"Ride The Lighting"};
+    CdChanger::Disc disc2 {"Kind of Blue"};
+    CdChanger::Disc disc3 {"Convergences"};
+
     void displayTripCds();
     void displayGames();
 };
@@ -535,46 +527,22 @@ RoadTripEntertainment::~RoadTripEntertainment()
 {
     std::cout << "There will be no further entertainment on this roadtrip...\n";
 }
-void RoadTripEntertainment::addToCdCase(CdChanger::Disc nDisc)
-{
-    cdCase.push_back(nDisc);
-}
-
-void RoadTripEntertainment::addToGameCase(GameBoy::Cartridge nGame)
-{
-    games.push_back(nGame);
-}
 
 void RoadTripEntertainment::displayTripCds()
 {
-    if (!cdCase.empty())
-    {
-        std::cout << "What should we listen to...\n";
-        for(unsigned int i = 0; i < cdCase.size(); i++)
-        {
-            std::cout << i + 1 << ". " << cdCase.at(i).albumName << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "Uh oh.  Looks like you forgot to pack some music. :'( \n";
-    }
+    std::cout << "What're we groovin to?\n";
+    std::cout << "First CD is " << disc1.albumName << std::endl;
+    std::cout << "The second CD is " << disc2.albumName << std::endl;
+    std::cout << "And the last one is " << disc3.albumName << std::endl;
 }
 
 void RoadTripEntertainment::displayGames()
 {
-    if (!games.empty())
-    {
-        std::cout << "What kind of game are we playing today...\n";
-        for(unsigned int i = 0; i < games.size(); i++)
-        {
-            std::cout << i + 1 << ". " << games.at(i).name << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "How horrible!  We forgot all the games! :O \n";
-    }
+    std::cout << "Ooh!  What did we bring to play?\n";
+    std::cout << "Game number 1 is " << game1.name << std::endl;
+    std::cout << "Game number 2 is " << game2.name << std::endl;
+    std::cout << "And the last one is " << game3.name << std::endl;
+    std::cout << "Looks like we've got some good fun lined up!\n";
 }
 
 /*
@@ -604,61 +572,23 @@ int main()
     FountainPen::Nib music;
     music.style = "music";
     std::cout << "--------------------------------------------------------------------\n";
-
-    RoadTripEntertainment goingToCalifornia;
     
     GameBoy gbColor;
     std::cout << "--------------------------------------------------------------------\n";
 
-    goingToCalifornia.displayGames();
-
-    GameBoy::Cartridge goldenSun;
-    goldenSun.name = "Golden Sun";
-    goingToCalifornia.addToGameCase(goldenSun);
+    GameBoy::Cartridge goldenSun {"Golden Sun"};
+    std::cout << "This is " << goldenSun.name << std::endl;
     std::cout << "--------------------------------------------------------------------\n";
 
-    GameBoy::Cartridge marioBros3;
-    marioBros3.name = "Mario Bros 3";
-    goingToCalifornia.addToGameCase(marioBros3);
+    GameBoy::Cartridge marioBros3 {"Mario Bros 3"};
+    std::cout << "This is " << marioBros3.name << std::endl;
     std::cout << "--------------------------------------------------------------------\n";
-    
-    goingToCalifornia.displayGames();
     
     CdChanger phillips;
     std::cout << "--------------------------------------------------------------------\n";
 
-    goingToCalifornia.displayTripCds();
-
-    CdChanger::Disc vanHalen;
-    vanHalen.albumName = "Van Halen";
-    goingToCalifornia.addToCdCase(vanHalen);
+    CdChanger::Disc vanHalen {"Van Halen"};
     std::cout << "--------------------------------------------------------------------\n";
-
-    CdChanger::Disc rideTheLightning;
-    rideTheLightning.albumName = "Ride The Lightning";
-    goingToCalifornia.addToCdCase(rideTheLightning);
-    rideTheLightning.populateAlbumTrackNames();
-    std::cout << "--------------------------------------------------------------------\n";
-
-    CdChanger::Disc imagesAndWords;
-    imagesAndWords.albumName = "Images And Words";
-    goingToCalifornia.addToCdCase(imagesAndWords);
-    imagesAndWords.populateAlbumTrackNames();
-    std::cout << "--------------------------------------------------------------------\n";
-
-    CdChanger::Disc bustinOut;
-    bustinOut.albumName = "Bustin Out";
-    goingToCalifornia.addToCdCase(bustinOut);
-    bustinOut.populateAlbumTrackNames();
-    std::cout << "--------------------------------------------------------------------\n";
-
-    CdChanger::Disc kindOfBlue;
-    kindOfBlue.albumName = "Kind Of Blue";
-    goingToCalifornia.addToCdCase(kindOfBlue);
-    kindOfBlue.populateAlbumTrackNames();
-    std::cout << "--------------------------------------------------------------------\n";
-
-    goingToCalifornia.displayTripCds();
 
     platinum.writeCharacter('q');
     platinum.drawALine(1, 5, 15);
@@ -702,5 +632,9 @@ int main()
     fourHolster.displayAllPens();
     fourHolster.displayPen(fourHolster.pen2);
 
+    RoadTripEntertainment goingToCalifornia;
+    goingToCalifornia.displayTripCds();
+    goingToCalifornia.displayGames();
+    
     std::cout << "good to go!" << std::endl;
 }
