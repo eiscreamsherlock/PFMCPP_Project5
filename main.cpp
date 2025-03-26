@@ -473,10 +473,13 @@ struct PenCase
     
     PenCase();
     ~PenCase();
-    std::vector<FountainPen> pens;
+    FountainPen pen1 {"Falcon"};
+    FountainPen pen2 {"Mont Blanc"};
+    FountainPen pen3 {"Kaweco"};
+    FountainPen pen4 {"Sailor"};
 
-    void addNewPen(FountainPen newPen);
-    void displayPens();
+    void displayPen(FountainPen pen);
+    void displayAllPens();
 };
 
 PenCase::PenCase()
@@ -489,45 +492,22 @@ PenCase::~PenCase()
     std::cout << "You'll need to find a new case to put your pens in...\n";
 }
 
-void PenCase::addNewPen(FountainPen nPen)
+void PenCase::displayPen(FountainPen p)
 {
-    pens.push_back(nPen);
+    if (!p.name.empty())
+    {
+        std::cout << "This is your " << p.name << std::endl;
+    }
 }
 
-/*
-Had to do some reading to sort this one out.
-
-Read here that vectors are the "dynamic-sized array":
-https://en.cppreference.com/w/cpp/container/vector
-
-Got the syntax and for loops example from here:
-https://www.w3schools.com/cpp/cpp_vectors.asp
-
-I kept getting warnings about type mismatch in my for loop and using the 
-pens[i].name syntax.
-I remembered your notes about unbound/unsafe arrays in a previous assignment,
-so I read this page after seeing "access specified element with bounds checking"
-in the member functions list:
-https://en.cppreference.com/w/cpp/container/vector/at
-
-*/
-void PenCase::displayPens()
+void PenCase::displayAllPens()
 {
-    if (!pens.empty())
-    {
-        std::cout << "Let's see what we've got in here...\n";
-        // kept complaining about signed int vs. unsigned size_type
-        // I think it's safe to use the unsigned int here because we're always
-        // counting up and shouldn't have a negative value in the loop.
-        for(unsigned int i = 0; i < pens.size(); i++)
-        {
-            std::cout << i + 1 << ". " << pens.at(i).name << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "Looks like you need to get some new pens!\n";
-    }
+    std::cout << "Let's have a look in here.  We've got...\n";
+    std::cout << "A " << pen1.name << std::endl;
+    std::cout << "A " << pen2.name << std::endl;
+    std::cout << "A " << pen3.name << std::endl;
+    std::cout << "And a " << pen4.name << std::endl;
+    std::cout << "Time to get writing!\n";
 }
 
 /*
@@ -719,13 +699,8 @@ int main()
     phillips.pausePlayback();
 
     PenCase fourHolster;
-    fourHolster.displayPens();
-    FountainPen pilot("Namiki Falcon");
-    FountainPen kaweco("Liliput");
-    fourHolster.addNewPen(pilot);
-    fourHolster.addNewPen(kaweco);
-    fourHolster.addNewPen(platinum);
-    fourHolster.displayPens();
+    fourHolster.displayAllPens();
+    fourHolster.displayPen(fourHolster.pen2);
 
     std::cout << "good to go!" << std::endl;
 }
