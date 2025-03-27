@@ -246,7 +246,7 @@ struct CdChanger
 
     void playCD(int newCdNumber, Disc discToPlay);
     void playCdTillEnd(int startingTrack);
-    void changeTrack (int newTrackNumber, Disc currentDisc);
+    void changeTrack (int newTrackNumber);
     void pausePlayback();
 
 };
@@ -301,7 +301,7 @@ void CdChanger::playCdTillEnd(int start)
     currTrackNumber = 1;        // Reset to start after finishing the disk
 }
 
-void CdChanger::changeTrack (int newTrackNum, Disc currDisc)
+void CdChanger::changeTrack (int newTrackNum)
 {
     currTrackNumber = newTrackNum;
 }
@@ -624,7 +624,7 @@ int main()
 
     vanHalen.displayAlbumName();
     phillips.playCD(2, vanHalen);
-    phillips.changeTrack (2, vanHalen);
+    phillips.changeTrack (2);
     phillips.playCdTillEnd(2);
     std::cout << "Hey, what does this button do?...\n";
     phillips.pausePlayback();
