@@ -101,14 +101,20 @@ struct FountainPen
         void polishNib(std::string nibStyle, bool isPolished);
         void changeNib(std::string newNib);
         int grindNib(int amntToGrnd);
+        int howLongIsThisNib() { return lengthInMm; }
+        void displayInfo();
+    
     };
 
     Nib currentInstalledNib;
+
+    void printInfo();
 
     void writeCharacter(char userCharacter);
     void drawALine(int x_start, int y_start, int lengthOfLine);
     int getMmNibLength(Nib currentNib);
     int compareNibLength(Nib currentNib, Nib newNib);
+    void showNib();
 };
 
 FountainPen::FountainPen(std::string n) :
@@ -220,6 +226,22 @@ int FountainPen::compareNibLength(Nib currentNib, Nib newNib)
     return currentNib.lengthInMm;
 }
 
+void FountainPen::printInfo()
+{
+    std::cout << "Fountain Pen Ink remaining: " << this->inkRemaining << \
+        " Nib length: " << this->getMmNibLength(this->currentInstalledNib) << std::endl;
+}
+
+void FountainPen::Nib::displayInfo()
+{
+    std::cout << "This nib is called: " << this->style << " and it is " \
+        << this->howLongIsThisNib() << "mm long." << std::endl;
+}
+
+void FountainPen::showNib()
+{
+    std::cout << "Currently installed nib type is: " << this->currentInstalledNib.style << std::endl;
+}
 
 /*
  copied UDT 2:
@@ -240,14 +262,18 @@ struct CdChanger
         int numOfTracks = 12;
 
         void displayAlbumName();
+        int howManyTracks() { return this->numOfTracks ;}
+        void displayInfo();
     };
 
     Disc activeDisk {"Midnight Madness"};
 
     void playCD(int newCdNumber, Disc discToPlay);
     void playCdTillEnd(int startingTrack);
-    void changeTrack (int newTrackNumber, Disc currentDisc);
+    void changeTrack (int newTrackNumber);
     void pausePlayback();
+    std::string getCurrentTrackName();
+    void displayInfo();
 
 };
 
@@ -301,7 +327,7 @@ void CdChanger::playCdTillEnd(int start)
     currTrackNumber = 1;        // Reset to start after finishing the disk
 }
 
-void CdChanger::changeTrack (int newTrackNum, Disc currDisc)
+void CdChanger::changeTrack (int newTrackNum)
 {
     currTrackNumber = newTrackNum;
 }
@@ -309,6 +335,24 @@ void CdChanger::pausePlayback()
 {
     std::cout << "*SOUND OF SILENCE*\n";
 }
+
+std::string CdChanger::getCurrentTrackName()
+{
+    return this->currentTrackName;
+}
+
+void CdChanger::displayInfo()
+{
+    std::cout << "Currently playing " << this->currentTrackName << " from the album " \
+        << this->currentDisc << std::endl;
+}
+
+void CdChanger::Disc::displayInfo()
+{
+    std::cout << "This is " << this->albumName << ". It has " << this->howManyTracks() \
+        << " tracks on it.\n";
+}
+
 /*
  copied UDT 3:
  */
@@ -333,7 +377,11 @@ struct GameBoy
         void saveGameStateToRAM();
         void cleanCartridgeHead(Cartridge cName);
         bool doYouHaveBattleToads();
+        int getUsedMem() { return memoryUsed; }
+        int getMaxMem() { return maxMemory; }
         void playTilLvl(int tgtLvl);
+        void displayInfo();
+        void showName();
     };
 
     Cartridge currentGame {"Bust-a-Move"};
@@ -343,6 +391,7 @@ struct GameBoy
     double adjustBrightness(double adjustAmount);
     void insertNewCartridge(Cartridge newGame);
     void playGameTilOver();
+    void nowPlaying();
 };
 
 GameBoy::Cartridge::Cartridge(std::string n) :
@@ -451,7 +500,22 @@ void GameBoy::Cartridge::playTilLvl(int tLvl)
         std::cout << "Level complete!\n";
         ++currentLvl;
     }
+}
 
+void GameBoy::Cartridge::displayInfo()
+{
+   std::cout << "You can call me " << this->name << ". I am using " << this->getUsedMem() \
+    << "MB of my " << this->getMaxMem() << "MB total memory.\n";
+}
+
+void GameBoy::Cartridge::showName()
+{
+    std::cout << "This is " << this->name << std::endl;
+}
+
+void GameBoy::nowPlaying()
+{
+    std::cout << "You are playing " << this->currentGame.name << std::endl;
 }
 
 /*
@@ -564,32 +628,28 @@ void RoadTripEntertainment::displayGames()
 int main()
 {
     FountainPen platinum("Platinum 3776");
-    std::cout << "--------------------------------------------------------------------\n";
 
     FountainPen::Nib flexyGold;
     flexyGold.style = "gold flexible";
-    std::cout << "--------------------------------------------------------------------\n";
 
     FountainPen::Nib music;
     music.style = "music";
-    std::cout << "--------------------------------------------------------------------\n";
     
     GameBoy gbColor;
-    std::cout << "--------------------------------------------------------------------\n";
 
     GameBoy::Cartridge goldenSun {"Golden Sun"};
     std::cout << "This is " << goldenSun.name << std::endl;
-    std::cout << "--------------------------------------------------------------------\n";
+    goldenSun.showName();
+    
 
     GameBoy::Cartridge marioBros3 {"Mario Bros 3"};
     std::cout << "This is " << marioBros3.name << std::endl;
-    std::cout << "--------------------------------------------------------------------\n";
+    marioBros3.showName();
     
     CdChanger phillips;
-    std::cout << "--------------------------------------------------------------------\n";
 
     CdChanger::Disc vanHalen {"Van Halen"};
-    std::cout << "--------------------------------------------------------------------\n";
+    vanHalen.firstTrack = "Runnin' With the Devil";
 
     platinum.writeCharacter('q');
     platinum.drawALine(1, 5, 15);
@@ -601,8 +661,10 @@ int main()
     platinum.currentInstalledNib.cleanNib(false);
     platinum.currentInstalledNib.polishNib("italic", true);
     std::cout << "Currently installed nib type is: " << platinum.currentInstalledNib.style << std::endl;
+    platinum.showNib();
     platinum.currentInstalledNib.changeNib("bold");
     std::cout << "Currently installed nib type is: " << platinum.currentInstalledNib.style << std::endl;
+    platinum.showNib();
 
     gbColor.currentGame.saveGameStateToRAM();
     gbColor.currentGame.doYouHaveBattleToads();
@@ -611,9 +673,11 @@ int main()
     gbColor.adjustVolume(10.0f);
     gbColor.adjustBrightness(35.0);
     std::cout << "You are playing " << gbColor.currentGame.name << std::endl;
+    gbColor.nowPlaying();
     goldenSun.isClean = false;
     gbColor.insertNewCartridge(goldenSun);
     std::cout << "You are playing " << gbColor.currentGame.name << std::endl;
+    gbColor.nowPlaying();
     gbColor.currentGame.cleanCartridgeHead(gbColor.currentGame);
     gbColor.currentGame.playTilLvl(99);
 
@@ -624,7 +688,7 @@ int main()
 
     vanHalen.displayAlbumName();
     phillips.playCD(2, vanHalen);
-    phillips.changeTrack (2, vanHalen);
+    phillips.changeTrack (1);
     phillips.playCdTillEnd(2);
     std::cout << "Hey, what does this button do?...\n";
     phillips.pausePlayback();
@@ -636,6 +700,44 @@ int main()
     RoadTripEntertainment goingToCalifornia;
     goingToCalifornia.displayTripCds();
     goingToCalifornia.displayGames();
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "----------------------------------------------------------\n";
+    std::cout << "------------------------5.2 Out---------------------------\n";
+    std::cout << "----------------------------------------------------------\n";
+
+    // Fountain Pen
+    std::cout << "Fountain Pen Ink remaining: " << platinum.inkRemaining << " Nib length: " << platinum.currentInstalledNib.lengthInMm << std::endl;
+    platinum.printInfo();
+    std::cout << std::endl;
+    
+    // Nib
+    std::cout << "This nib is called: " << flexyGold.style << " and it is " \
+        << flexyGold.howLongIsThisNib() << "mm long." << std::endl;
+    flexyGold.displayInfo();
+    std::cout << std::endl;
+    
+    // Cd Changer
+    std::cout << "Currently playing " << phillips.currentTrackName << " from the album " \
+        << phillips.currentDisc << std::endl;
+    phillips.displayInfo();
+    std::cout << std::endl;
+    
+    // Disc
+    std::cout << "This is " << vanHalen.albumName << ". It has " << vanHalen.howManyTracks() \
+        << " tracks on it.\n";
+    vanHalen.displayInfo();
+    std::cout << std::endl;
+    
+    // GameBoy
+   std::cout << "You can call me " << gbColor.currentGame.name << ". I am using " << gbColor.currentGame.getUsedMem() \
+    << "MB of my " << gbColor.currentGame.getMaxMem() << "MB total memory.\n";
+    gbColor.currentGame.displayInfo();
+    std::cout << std::endl;
+    std::cout << std::endl;
     
     std::cout << "good to go!" << std::endl;
 }
